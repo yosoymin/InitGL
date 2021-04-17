@@ -52,10 +52,14 @@ GLuint createTexture(unsigned width, unsigned height) {
 }
 
 // This function creates some textures in a shared context and deletes them in the main context
-// This is generating some memory leaks in GPU memory in Intel drivers since version TODO: set version found that reproduces this bug
+// This is generating some memory leaks in GPU memory in Intel Windows drivers since version 27.20.100.8783.
 void testSharedContextTextures(GLFWwindow* mainWindow, GLFWwindow* sharedContextWindow) {
     glfwMakeContextCurrent(sharedContextWindow);
 
+    // INFO: Creating more than one texture in a shared context and destroying them in the main context
+    // generates a leak in Intel OpenGL drivers for Windows. Creating only one works propely. Also this is
+    // working ok for old versions of the Intel driver and also for NVIDIA drivers. In other platforms like
+    // Linux is working properly for Intel drivers.
     std::array<GLuint, 2> textures;
     for (auto& texture : textures)
         texture = createTexture(1024, 1024);
